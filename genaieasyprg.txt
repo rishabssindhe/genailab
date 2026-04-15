@@ -1,0 +1,87 @@
+import gensim.downloader as api
+m=api.load("glove-wiki-gigaword-100")
+a=m.most_similar("king",topn=5)
+for w,s in a:
+    print(f"{w}:{s:0.2f}")
+print(m.most_similar(positive=["king", "woman"], negative=["man"])[0][0])
+print(m.similarity("king","queen"))
+print(m.doesnt_match(["apple","banana","grape","car"]))
+
+
+
+
+import gensim.downloader as api
+import matplotlib.pyplot as plt
+import numpy as np
+from sklearn.decomposition import PCA
+m=api.load("glove-wiki-gigaword-100")
+w=["computer","algorithm","hardware","software","network","ai","cloud","database","cybersecurity","encryption"]
+v=np.array([m[i] for i in w])
+r=PCA(2).fit_transform(v)
+for i,(x,y) in zip(w,r):
+    plt.scatter(x,y);plt.text(x,y,i)
+plt.show()
+similar=m.most_similar(w,topn=5)
+for w,s in similar:
+    print(f"{w}: Similarity: {s:.4f}")
+
+
+
+
+from gensim.models import Word2Vec
+import nltk, matplotlib.pyplot as plt
+from nltk.tokenize import word_tokenize
+from sklearn.manifold import TSNE
+
+c = [
+"The doctor diagnosed the patient with diabetes.",
+"Insulin is used to treat diabetes.",
+"A cardiologist specializes in heart diseases.",
+"Patients with hypertension should reduce salt intake.",
+"Antibiotics treat bacterial infections.",
+"Vaccines help build immunity.",
+"Surgery removes tumors.",
+"A neurologist treats nervous system disorders."
+]
+
+nltk.download('punkt')
+t = [word_tokenize(i.lower()) for i in c]
+
+m = Word2Vec(t, vector_size=50, min_count=1)
+
+w = list(m.wv.index_to_key)
+r = TSNE(2).fit_transform(m.wv[w])
+
+for i,(x,y) in zip(w,r):
+    plt.scatter(x,y); plt.text(x,y,i)
+plt.show()
+
+try:
+    print(m.wv.most_similar("diabetes",5))
+except:
+    print("Error")
+
+
+
+import gensim.downloader as api
+m=api.load("glove-wiki-gigaword-100")
+prompt="Describe the beautiful landscape during the sunset."
+def enrich_prompt(prompt,m,n=5):
+    words=prompt.split()
+    enriched_res=[]
+    for word in words:
+        lower_words=word.lower()
+        if lower_words in  m:
+            similar_words=m.most_similar(lower_words,topn=n)
+            similar_words_list=[w[0] for w in similar_words]
+            enriched_res.append(" ".join(similar_words_list))
+        else:
+            enriched_res.append(" ".join(word))
+    return " ".join(enriched_res)
+enriched_prompt = enrich_prompt(prompt,m)
+
+print("Original Prompt:")
+print(prompt)
+
+print("\nEnriched Prompt:")
+print(enriched_prompt)
