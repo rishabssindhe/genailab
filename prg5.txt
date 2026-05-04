@@ -1,0 +1,10 @@
+import gensim.downloader as api
+import random
+model = api.load("glove-wiki-gigaword-50")
+seed = input("Enter seed word (e.g., 'forest', 'space', 'hero'): ").lower()
+sim_words = [w for w, score in model.most_similar(seed, topn=5)]
+story = f""" The story of the {seed} began in a distant land. It encountered a mysterious
+{random.choice(sim_words)} near a {random.choice(sim_words)}. The {seed} felt a sense of
+{random.choice(sim_words)}, realizing that this was a path toward {random.choice(sim_words)}. """
+print("\n--- Generated Story ---")
+print(story)
