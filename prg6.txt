@@ -1,0 +1,9 @@
+from transformers import pipeline
+classifier = pipeline("sentiment-analysis")
+sentences = ["I absolutely love the new features of this product!", "The service was terrible and the staff was
+rude.", "The movie was okay, but the ending was predictable."]
+print("Sentiment Analysis Results:")
+for s in sentences:
+ res = classifier(s)[0]
+ print(f"Text: {s}")
+ print(f"Result: {res['label']} | Score: {res['score']:.4f}\n")
