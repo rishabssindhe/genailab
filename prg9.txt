@@ -1,0 +1,23 @@
+from pydantic import BaseModel
+import wikipedia
+class Institution(BaseModel):
+ name: str
+ founder: str
+ founded: str
+ branches: str
+ employees: str
+ summary: str
+name = input("Enter Institution Name: ")
+page = wikipedia.page(name)
+summary_lines = page.summary.split('.')[:4]
+full_summary = ". ".join(summary_lines) + "."
+data = Institution(
+ name=page.title,
+ founder="Check Wikipedia Sidebar",
+ founded="See Summary",
+ branches="Multiple",
+ employees="N/A",
+ summary=full_summary
+)
+print("\n--- Extracted Institution Details ---")
+print(data.model_dump_json(indent=4))
