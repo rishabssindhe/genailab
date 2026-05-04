@@ -1,0 +1,10 @@
+from langchain_core.prompts import PromptTemplate
+from langchain_community.llms import HuggingFacePipeline
+from transformers import pipeline
+pipe = pipeline("text-generation", model="gpt2", max_new_tokens=30)
+llm = HuggingFacePipeline(pipeline=pipe)
+content = "AI is transforming healthcare and finance by automating tasks."
+print(“\n”)
+prompt = PromptTemplate.from_template("Summarize this: {text}")
+chain = prompt | llm
+print(chain.invoke({"text": content}))
