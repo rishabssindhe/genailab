@@ -1,0 +1,24 @@
+import PyPDF2
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.metrics.pairwise import cosine_similarity
+def get_pdf_text(file):
+ txt = ""
+ with open(file, 'rb') as f:
+ pdf = PyPDF2.PdfReader(f)
+ for p in pdf.pages[:30]:
+ txt += p.extract_text()
+ return txt
+print("Loading IPC...")
+try:
+ raw_text = get_pdf_text("ipc.pdf")
+ chunks = [c.strip() for c in raw_text.split("Section") if len(c) > 10]
+ while True:
+ query = input("\nAsk IPC (or 'exit'): ")
+ if query.lower() == 'exit': break
+ vec = TfidfVectorizer()
+ matrix = vec.fit_transform(chunks + [query])
+ sim = cosine_similarity(matrix[-1], matrix[:-1]).flatten()
+ print(f"\nResult: {chunks[sim.argmax()][:400]}...")
+
+except FileNotFoundError:
+ print("Please upload 'ipc.pdf' first!")
